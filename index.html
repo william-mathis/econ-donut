@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  .arc text {
+    font: 10px sans-serif;
+    text-anchor: middle;
+    font-weight: bold;
+  }
+
+  .arc path {
+    stroke: #fff;
+  }
+</style>
+
+<body>
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <script>
+    var width = 960,
+      height = 500,
+      radius = Math.min(width, height) / 2;
+    //#8A88A6 - did not answer
+    //#97ABC5 - agree
+    //#808B99 - uncertain
+    //#808B99 - disagree
+    //#6B486B - strongly disagree
+    var color = d3.scale.ordinal()
+      .range(["#56CBF9", "#F8333C", "#F77E84", "#808B99", "#BCCCE0", "#BCCCE0", "#BCCCE0"]);
+
+    var arc = d3.svg.arc()
+      .outerRadius(radius - 10)
+      .innerRadius(radius - 100);
+
+    var pie = d3.layout.pie()
+      .sort(null)
+      .value(function(d) {
+        return d.Count;
+      });
+
+    var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    d3.csv("data.csv", type, function(error, data) {
+      if (error) throw error;
+
+      var g = svg.selectAll(".arc")
+        .data(pie(data))
+        .enter().append("g")
+        .attr("class", "arc");
+
+      g.append("path")
+        .attr("d", arc)
+        .style("fill", function(d) {
+          return color(d.data.Vote);
+        });
+
+      g.append("text")
+        .attr("transform", function(d) {
+          return "translate(" + arc.centroid(d) + ")";
+        })
+        .attr("dy", ".35em")
+        .text(function(d) {
+          return d.data.Vote;
+        });
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", -75)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .style("font-weight", "bold")
+        .text(
+          "QUESTION:");
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", -50)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .text(
+          "If the US enacts a tax bill similar to those");
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", -35)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .text(
+          "currently moving through Congress and");
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", -20)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .text(
+          "assuming no other changes in tax or spending ");
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", -5)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .text(
+          "US GDP will be substantially higher");
+
+      svg.append("text")
+        .attr("x", 0)
+        .attr("y", 10)
+        .attr('text-anchor', "middle")
+        .attr('width', 2)
+        .attr('height', (height / 4))
+        .style("font-size", "14px")
+        .style("font-family", "sans-serif")
+        .text(
+          "a decade from now than under the status quo.");
+
+    });
+
+    function type(d) {
+      d.Count = +d.Count;
+      return d;
+    }
+  </script>
